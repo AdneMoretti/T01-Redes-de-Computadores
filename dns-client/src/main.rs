@@ -1,31 +1,16 @@
 use std::net::UdpSocket;
+mod parser;
+
+pub use crate::parser::parser_dns;
 
 //const secret = rand::thread_rng();
 
-//  struct DnsHeader {
-//      id: u16, 
-//      flags: u16, 
-//      qd_count: u16, 
-//      an_count: u16, 
-//      ar_count: u16    
-//  }
-
-//  /*
-//  HEADER     		OPCODE=0	
-//  QUESTION		QNAME="unb.br", QCLASS=01, QTYPE="NS"
-//  ANSWER          <empty>  0x0000
-//  AUTHORITY       <empty>  0x0000
-//  ADDITIONAL      <empty>  0x0000
-//  */
-//  struct DnsQuestion {
-//      q_name: u16,
-//      q_type: u16,
-//      q_class: u16
-//  }
 
 fn main() {
     let _id1: u8 = rand::random();
     let _id2: u8 = rand::random();
+
+
     let args: Vec<String> = std::env::args().collect();
     
     // let _id: u16 = transaction_id;
@@ -34,7 +19,7 @@ fn main() {
     // let _an_count: u16 = 0x0000;
     // let _ar_count: u16 = 0x0000;
     // let _ad_count: u16 = 0x0000;|
-   // print!("{}", (_id1<< (8  as u32) as u32 + _id2 as u32) as u32); 
+   //println!("{}", (((_id1 << 8)  as u16) | _id2 as u16)); 
    print!("ID = ");
 
    println! ("{} {}", _id1, _id2 );
@@ -68,19 +53,20 @@ fn main() {
 
     socket.send_to(&buffer, format!("{}:53", args[2])).expect("Couldn't send message");
 
-    let mut res = [0; 255];
+    let mut res: [u8; 255] = [0; 255];
 
-    let (amt, src) = socket.recv_from(&mut res).expect("Couldn't send message");
+    let (size, _) = socket.recv_from(&mut res).expect("Couldn't send message");
 
+    println!("{}", size);
     println!("{}:53", args[2]);
     
     
     
-    
     print!("res = ");
-    for e in res {
-        print!("{} ", e);
+    for e in 0..size{
+        print!("{}: {} ", e,  res[e]);
     }
+    parser_dns::parse_response(&res[0..size]); 
 
     println!();
 
