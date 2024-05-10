@@ -64,11 +64,9 @@ fn main() {
     
     print!("res = ");
     for e in 0..size{
-        print!("{}: {} ", e,  res[e]);
+        print!("{}: {} ", e, res[e]);
     }
     parser_dns::parse_response(&res[0..size]); 
-
-    println!();
 
     // socket.send();   
     

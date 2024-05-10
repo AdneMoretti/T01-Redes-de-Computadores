@@ -11,6 +11,15 @@ pub mod types {
         ar_count: u16    
     }
 
+    pub DnsAnswer {
+        name: String, 
+        type: u16, 
+        class: u16, 
+        time_to_live: u16, 
+        data_length: u16, 
+        data: String
+    }
+
  /*
  HEADER     		OPCODE=0	
  QUESTION		QNAME="unb.br", QCLASS=01, QTYPE="NS"
