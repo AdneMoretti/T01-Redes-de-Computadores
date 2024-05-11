@@ -11,20 +11,23 @@ pub mod parser_dns {
     use super::DnsHeader;
 
     pub fn parse_response(res: &[u8]){
-        let id1: u8 = res[0]; 
-        let id2: u8 = res[1]; 
         //let header: DnsHeader::new();
 
         //let display_result = res
         //String::from_utf8(display_result).unwrap();
-        let record_type: u16 = ((id1 as u16) << 8) | (id2 as u16);
-        // self::parse_qname(res);
+        self::parse_id(res[0], res[1]); 
+        self::parse_qname(res);
         // header: DnsHeader::new();
 
         //let display_result = res
         //String::from_utf8(display_result).unwrap();
         parse_flags(res);
         
+    }
+    
+    pub fn parse_id(id_1: u8, id_2: u8) -> u16{
+        let record_type: u16 = ((id_1 as u16) << 8) | (id_2 as u16);
+        return record_type; 
     }
 
     pub fn parse_flags(res: &[u8]){
@@ -51,6 +54,7 @@ pub mod parser_dns {
                 qname.push_str(".");
             }
         }
+        println!("{}", qname);
         return qname; 
     }
 
