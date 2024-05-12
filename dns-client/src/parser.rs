@@ -1,45 +1,48 @@
+use rand::Error;
 
-pub struct DnsHeader {
-    id: u16, 
-    flags: u16, 
-    qd_count: u16, 
-    an_count: u16, 
-    ar_count: u16    
+pub struct DnsResponse {
+    pub id: u16, 
+    pub flags: u16, 
+    pub qd_count: u16, 
+    pub an_count: u16, 
+    pub ns_count: u16, 
+    pub ar_count: u16 
 }
 
-pub mod parser_dns {
-    use rand::Error;
+impl DnsResponse {
 
-    use super::DnsHeader;
+    // pub fn novo ->{
+    //     id: 0,  
+    //     flags: 0, 
+    //     qd_count: 0, 
+    //     an_count: 0,
+    //     ns_count: 0,  
+    //     ar_count: 0
+    // }
 
-    pub fn parse_response(res: &[u8]){
-        //let header: DnsHeader::new();
-
-        //let display_result = res
-        //String::from_utf8(display_result).unwrap();
-        //self::parse_id(res[0], res[1]); 
-        let domain: String = self::parse_qname(res);
-        // header: DnsHeader::new();
-
-        //let display_result = res
-        //String::from_utf8(display_result).unwrap();
-        get_response_code(res[3], domain.as_str());
-        
-    }
-    
-    pub fn parse_id(id_1: u8, id_2: u8) -> u16{
-        let record_type: u16 = ((id_1 as u16) << 8) | (id_2 as u16);
-        return record_type; 
+    pub fn parse_header(&mut self, res: &[u8]){
+        self.id = ((res[0] as u16) << 8) | (res[1] as u16);
+        self.flags = ((res[2] as u16) << 8) + (res[3] as u16);
+        self.qd_count = ((res[4] as u16) << 8) + (res[5] as u16);
+        self.an_count = ((res[6] as u16) << 8) + (res[7] as u16);
+        self.ns_count = ((res[8] as u16) << 8) | (res[9] as u16);
+        self.ar_count = ((res[10] as u16) << 8) | (res[11] as u16);
     }
 
-    pub fn get_response_code(flag: u8, domain_name: &str) -> Result<(), &str> {
+
+    // pub fn parse_id(id_1: u8, id_2: u8) -> u16{
+    //     let record_type: u16 = ((id_1 as u16) << 8) | (id_2 as u16);
+    //     return record_type; 
+    // }
+
+    pub fn get_response_code(&self, flag: u8, domain_name: &str) -> Result<(), &str> {
         let response_code: u8 = flag & 15; 
         println!("{}", response_code);
         match response_code {
             0=> return Ok(()),  
             1=> return Err("Format Error"), 
             2=> return Err("Server Failure"), 
-            3=> return Err(format!("Dominio {} nao encontrado", domain_name).as_str()), 
+            3=> return Err("Dominio nao encontrado"), 
             4=> return Err("Not Implemented"), 
             5=> return Err("Refused"), 
             _ => {
@@ -48,10 +51,9 @@ pub mod parser_dns {
         }
     }
 
-    // Criei essa função aqui para dar o parse no name, mas coloquei do primeiro name, temos que alterar para pegar o qname que vem no answer
-    pub fn parse_qname(res: &[u8]) -> String{
+    pub fn parse_qname(&self, res: &[u8]) -> String{
         let mut qname = String::from("");
-        let mut pos: usize = 12; 
+        let mut pos: usize = 0; 
 
         loop {
             let size: u8 = res[pos]; 
@@ -67,7 +69,6 @@ pub mod parser_dns {
                 qname.push_str(".");
             }
         }
-        println!("{}", qname);
         return qname; 
     }
 
