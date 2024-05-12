@@ -11,9 +11,9 @@ pub mod types {
         ar_count: u16    
     }
 
-    pub DnsAnswer {
+    pub struct DnsAnswer {
         name: String, 
-        type: u16, 
+        a_type: u16, 
         class: u16, 
         time_to_live: u16, 
         data_length: u16, 

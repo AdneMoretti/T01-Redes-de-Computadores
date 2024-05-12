@@ -36,7 +36,7 @@ fn send(server : String, name : String, socket: &UdpSocket) {
     
 }
 
-fn receive(socket: &UdpSocket, name: String, server : String,) -> Vec<u8>  {
+fn receive(socket: &UdpSocket, name: String) -> Vec<u8>  {
     let mut res: [u8; 255] = [0; 255];
     
     let (size, _) = socket.recv_from(& mut res).expect("Couldn't send message");
@@ -51,17 +51,19 @@ fn receive(socket: &UdpSocket, name: String, server : String,) -> Vec<u8>  {
     };
 
     match dns_response.get_response_code(res[3], name.as_str()){
-        Ok(()) => println!("funcionou"), 
+        Ok(()) => {
+            println!("funcionou")
+        }, 
         Err(e) => println!("{}", e)
     }
 
     dns_response.parse_header(&res[0..12]); 
     
-    let mut byte: usize = 12; 
+    let byte: usize = 12; 
     for _ in 0..dns_response.qd_count {
         let q_name = dns_response.parse_qname(&res[12..size], &byte);
         let (q_type, q_class) = dns_response.parse_question(&res[byte..size]); 
-        println!("{} : {}, { } ", q_name, q_type, q_class);
+        println!("{} : {}, {} ", q_name, q_type, q_class);  
     }
         
     for _ in 0..dns_response.an_count {
@@ -77,7 +79,7 @@ fn receive(socket: &UdpSocket, name: String, server : String,) -> Vec<u8>  {
     }
 
     for e in 0..size {
-        print!("{}: {} ", e, res[e]);
+        print!("{} ", res[e]);
     }
     return res[0..size].to_vec()
 }
@@ -90,7 +92,7 @@ fn main() {
 
   send(args[2].clone(), args[1].clone(), &socket);
 
-  let mut res: Vec<u8> = receive(&socket, args[1].clone(), args[2].clone()); 
+  let mut _res: Vec<u8> = receive(&socket, args[1].clone()); 
 
     
 }

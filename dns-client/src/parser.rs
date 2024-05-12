@@ -42,7 +42,7 @@ impl DnsResponse {
         return (q_type, q_class);
     }
 
-    pub fn parse_qname(&self, res: &[u8], byte: &mutusize) -> String{
+    pub fn parse_qname(&self, res: &[u8], byte: &usize) -> String{
         let mut qname = String::from("");
         let mut pos: usize = 0; 
 
