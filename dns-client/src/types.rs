@@ -20,13 +20,6 @@ pub mod types {
         data: String
     }
 
- /*
- HEADER     		OPCODE=0	
- QUESTION		QNAME="unb.br", QCLASS=01, QTYPE="NS"
- ANSWER          <empty>  0x0000
- AUTHORITY       <empty>  0x0000
- ADDITIONAL      <empty>  0x0000
- */
     struct DnsQuestion {
         q_name: u16,
         q_type: u16,

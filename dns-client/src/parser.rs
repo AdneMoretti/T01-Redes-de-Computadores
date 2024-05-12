@@ -8,6 +8,8 @@ pub struct DnsHeader {
 }
 
 pub mod parser_dns {
+    use rand::Error;
+
     use super::DnsHeader;
 
     pub fn parse_response(res: &[u8]){
@@ -15,13 +17,13 @@ pub mod parser_dns {
 
         //let display_result = res
         //String::from_utf8(display_result).unwrap();
-        self::parse_id(res[0], res[1]); 
-        self::parse_qname(res);
+        //self::parse_id(res[0], res[1]); 
+        let domain: String = self::parse_qname(res);
         // header: DnsHeader::new();
 
         //let display_result = res
         //String::from_utf8(display_result).unwrap();
-        parse_flags(res);
+        get_response_code(res[3], domain.as_str());
         
     }
     
@@ -30,9 +32,20 @@ pub mod parser_dns {
         return record_type; 
     }
 
-    pub fn parse_flags(res: &[u8]){
-        let flags: u16 = ((res[2] as u16) << 8) + (res[3] as u16);
-        println!("FLAGS {}", flags);
+    pub fn get_response_code(flag: u8, domain_name: &str) -> Result<(), &str> {
+        let response_code: u8 = flag & 15; 
+        println!("{}", response_code);
+        match response_code {
+            0=> return Ok(()),  
+            1=> return Err("Format Error"), 
+            2=> return Err("Server Failure"), 
+            3=> return Err(format!("Dominio {} nao encontrado", domain_name).as_str()), 
+            4=> return Err("Not Implemented"), 
+            5=> return Err("Refused"), 
+            _ => {
+                return Err("Valor fora do intervalo esperado.");
+            }
+        }
     }
 
     // Criei essa função aqui para dar o parse no name, mas coloquei do primeiro name, temos que alterar para pegar o qname que vem no answer
