@@ -6,19 +6,10 @@ pub struct DnsResponse {
     pub qd_count: u16, 
     pub an_count: u16, 
     pub ns_count: u16, 
-    pub ar_count: u16 
+    pub ar_count: u16
 }
 
 impl DnsResponse {
-
-    // pub fn novo ->{
-    //     id: 0,  
-    //     flags: 0, 
-    //     qd_count: 0, 
-    //     an_count: 0,
-    //     ns_count: 0,  
-    //     ar_count: 0
-    // }
 
     pub fn parse_header(&mut self, res: &[u8]){
         self.id = ((res[0] as u16) << 8) | (res[1] as u16);
@@ -28,12 +19,6 @@ impl DnsResponse {
         self.ns_count = ((res[8] as u16) << 8) | (res[9] as u16);
         self.ar_count = ((res[10] as u16) << 8) | (res[11] as u16);
     }
-
-
-    // pub fn parse_id(id_1: u8, id_2: u8) -> u16{
-    //     let record_type: u16 = ((id_1 as u16) << 8) | (id_2 as u16);
-    //     return record_type; 
-    // }
 
     pub fn get_response_code(&self, flag: u8, domain_name: &str) -> Result<(), &str> {
         let response_code: u8 = flag & 15; 
@@ -51,7 +36,13 @@ impl DnsResponse {
         }
     }
 
-    pub fn parse_qname(&self, res: &[u8]) -> String{
+    pub fn parse_question(&self, res: &[u8]) -> (u16, u16){
+        let q_type = ((res[0] as u16) << 8) + (res[1] as u16);
+        let q_class = ((res[2] as u16) << 8) + (res[3] as u16);
+        return (q_type, q_class);
+    }
+
+    pub fn parse_qname(&self, res: &[u8], byte: &mutusize) -> String{
         let mut qname = String::from("");
         let mut pos: usize = 0; 
 
@@ -61,13 +52,13 @@ impl DnsResponse {
 
             qname.push_str(&(String::from_utf8(my_vec)).unwrap());
             pos+=size as usize + 1;
-            
             if res[pos] == 0 {
                 break; 
             }
             else {
                 qname.push_str(".");
             }
+            println!("{}", pos); 
         }
         return qname; 
     }

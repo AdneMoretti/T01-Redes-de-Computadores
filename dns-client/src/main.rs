@@ -56,17 +56,28 @@ fn receive(socket: &UdpSocket, name: String, server : String,) -> Vec<u8>  {
     }
 
     dns_response.parse_header(&res[0..12]); 
-
-
+    
+    let mut byte: usize = 12; 
     for _ in 0..dns_response.qd_count {
-        let q_name: String = dns_response.parse_qname(&res[12..12+name.len()+2]);
-        println!("{}", q_name);
-
+        let q_name = dns_response.parse_qname(&res[12..size], &byte);
+        let (q_type, q_class) = dns_response.parse_question(&res[byte..size]); 
+        println!("{} : {}, { } ", q_name, q_type, q_class);
     }
         
-    
-    for (i, e) in res.iter().enumerate() {
-        print!("{}: {} ", i, e);
+    for _ in 0..dns_response.an_count {
+
+    }
+
+    for _ in 0..dns_response.ns_count {
+
+    }
+
+    for _ in 0..dns_response.ar_count {
+
+    }
+
+    for e in 0..size {
+        print!("{}: {} ", e, res[e]);
     }
     return res[0..size].to_vec()
 }
