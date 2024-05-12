@@ -2,7 +2,7 @@ use std::net::UdpSocket;
 mod parser;
 use parser::DnsResponse; 
 
-fn create_message(name : String) -> Vec<u8>{
+fn create_message(name : &String) -> Vec<u8>{
     println!("{}", name); 
     let _id1: u8 = rand::random();
     let _id2: u8 = rand::random();
@@ -31,10 +31,7 @@ fn create_message(name : String) -> Vec<u8>{
     
 }
 
-fn receive(socket: &UdpSocket, name: String) -> Vec<u8>  {
-    let mut res: [u8; 255] = [0; 255];
-    
-    let (size, _) = socket.recv_from(& mut res).expect("Couldn't send message");
+fn read_message(res: Vec<u8>, name: String)   {
     
     let mut dns_response = DnsResponse {
         id: 0, 
@@ -56,8 +53,8 @@ fn receive(socket: &UdpSocket, name: String) -> Vec<u8>  {
     
     let byte: usize = 12; 
     for _ in 0..dns_response.qd_count {
-        let q_name = dns_response.parse_qname(&res[12..size], &byte);
-        let (q_type, q_class) = dns_response.parse_question(&res[byte..size]); 
+        let q_name = dns_response.parse_qname(&res[12..res.len()], &byte);
+        let (q_type, q_class) = dns_response.parse_question(&res[byte..res.len()]); 
         println!("{} : {}, {} ", q_name, q_type, q_class);  
     }
         
@@ -73,25 +70,30 @@ fn receive(socket: &UdpSocket, name: String) -> Vec<u8>  {
 
     }
 
-    for e in 0..size {
+    for e in 0..res.len() {
         print!("{} ", res[e]);
     }
-    return res[0..size].to_vec()
+
 }
 
 fn main() {
-  let args: Vec<String> = std::env::args().collect();
+    let args: Vec<String> = std::env::args().collect();
 
-  let (name, server) = (args[1].clone(), args[2].clone());
-  
-  let socket: UdpSocket = UdpSocket::bind("0.0.0.0:0")
-    .expect("Couldn't bind to address");
+    let (name, server) = (args[1].clone(), args[2].clone());
 
-  socket.send_to(&create_message(name) , format!("{}:53", server))
-    .expect("Couldn't send message");
+    let socket: UdpSocket = UdpSocket::bind("0.0.0.0:0")
+        .expect("Couldn't bind to address");
 
-  let mut _res: Vec<u8> = receive(&socket, args[1].clone()); 
+    socket.send_to(&create_message(&name) , format!("{}:53", server))
+        .expect("Couldn't send message");
 
+
+    let mut res: [u8; 255] = [0; 255];
+
+    let (size, _) = socket.recv_from(&mut res)
+        .expect("Couldn't recv message");
+
+    read_message(res[0..size].to_vec(), name); 
     
 }
 
