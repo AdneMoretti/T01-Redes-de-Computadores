@@ -2,6 +2,9 @@ use std::net::UdpSocket;
 mod parser;
 use parser::DnsResponse; 
 
+
+use std::io::prelude::*;
+
 fn create_message(name : &String) -> Vec<u8>{
     println!("{}", name); 
     let _id1: u8 = rand::random();
@@ -65,40 +68,43 @@ fn read_message(res: Vec<u8>, name: String)   {
 
     }
 
-    for e in 0..res.len() {
-        print!("{} ", res[e]);
-    }
 
 }
 
 fn main() {
+
     let args: Vec<String> = std::env::args().collect();
+
 
     let (name, server) = (args[1].clone(), args[2].clone());
 
+
     let socket: UdpSocket = UdpSocket::bind("0.0.0.0:0")
         .expect("Couldn't bind to address");
+
 
     socket.send_to(&create_message(&name) , format!("{}:53", server))
         .expect("Couldn't send message");
 
 
     let mut res: [u8; 255] = [0; 255];
-
     let (size, _) = socket.recv_from(&mut res)
         .expect("Couldn't recv message");
 
     read_message(res[0..size].to_vec(), name); 
+
+
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= DEBUG -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= 
+
+    let mut file =  std::fs::File::create("debug_row_message.bin").unwrap();
+
+    file.write_all(&res).unwrap();
+
+    for e in 0..res.len() {
+        print!("{} ", res[e]);
+    }
     
+    //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= DEBUG -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= 
 }
-
-// Type NS 2 
-// Class IN 1
-// Query opcode = 0
-
-
-
-
-
 
 
