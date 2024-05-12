@@ -12,6 +12,24 @@ pub struct DnsResponse {
 
 impl DnsResponse {
 
+
+   pub fn new(res: &[u8]) -> Self {
+
+        let mut dns_response = DnsResponse {
+            id: 0, 
+            flags: 0, 
+            qd_count: 0, 
+            an_count: 0, 
+            ns_count: 0, 
+            ar_count: 0 
+        };
+
+        dns_response.parse_header(res);
+
+        dns_response
+    }
+
+
     pub fn parse_header(&mut self, res: &[u8]){
         self.id = ((res[0] as u16) << 8) | (res[1] as u16);
         self.flags = ((res[2] as u16) << 8) + (res[3] as u16);
@@ -67,9 +85,5 @@ impl DnsResponse {
         return qname; 
     }
 
-    // pub fn parse_data() {
-
-            
-    // }
 
 }

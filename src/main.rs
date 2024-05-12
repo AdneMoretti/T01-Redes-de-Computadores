@@ -32,15 +32,10 @@ fn create_message(name : &String) -> Vec<u8>{
 }
 
 fn read_message(res: Vec<u8>, name: String)   {
+
+
+    let mut dns_response = DnsResponse::new(&res);
     
-    let mut dns_response = DnsResponse {
-        id: 0, 
-        flags: 0, 
-        qd_count: 0, 
-        an_count: 0, 
-        ns_count: 0, 
-        ar_count: 0 
-    };
 
     match dns_response.get_response_code(res[3], name.as_str()){
         Ok(()) => {
