@@ -39,9 +39,9 @@ impl DnsResponse {
         self.ar_count = ((res[10] as u16) << 8) | (res[11] as u16);
     }
 
-    pub fn get_response_code(&self, flag: u8, domain_name: &str) -> Result<(), &str> {
+    pub fn get_response_code(&self, flag: u8, domain_name: &str) -> Result<(), &'static str> {
         let response_code: u8 = flag & 15; 
-        println!("{}", response_code);
+        println!("response_code = {}", response_code);
         match response_code {
             0=> return Ok(()),  
             1=> return Err("Format Error"), 
@@ -80,7 +80,6 @@ impl DnsResponse {
             else {
                 qname.push_str(".");
             }
-            println!("{}", pos); 
         }
         return qname; 
     }

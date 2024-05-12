@@ -34,26 +34,23 @@ fn create_message(name : &String) -> Vec<u8>{
     
 }
 
-fn read_message(res: Vec<u8>, name: String)   {
+fn read_message(res: Vec<u8>, name: String) -> Result<(), &'static str>   {
 
 
     let mut dns_response = DnsResponse::new(&res);
-    
 
-    match dns_response.get_response_code(res[3], name.as_str()){
-        Ok(()) => {
-            println!("funcionou")
-        }, 
-        Err(e) => println!("{}", e)
-    }
+    
+    dns_response.get_response_code(res[3], name.as_str())?;
+
 
     dns_response.parse_header(&res[0..12]); 
+
     
     let byte: usize = 12; 
     for _ in 0..dns_response.qd_count {
         let q_name = dns_response.parse_qname(&res[12..res.len()], &byte);
         let (q_type, q_class) = dns_response.parse_question(&res[byte..res.len()]); 
-        println!("{} : {}, {} ", q_name, q_type, q_class);  
+        println!("q_name = {} : q_type = {}, q_class = {} ", q_name, q_type, q_class);  
     }
         
     for _ in 0..dns_response.an_count {
@@ -67,6 +64,9 @@ fn read_message(res: Vec<u8>, name: String)   {
     for _ in 0..dns_response.ar_count {
 
     }
+
+
+    Ok(())
 
 
 }
@@ -91,7 +91,8 @@ fn main() {
     let (size, _) = socket.recv_from(&mut res)
         .expect("Couldn't recv message");
 
-    read_message(res[0..size].to_vec(), name); 
+    read_message(res[0..size].to_vec(), name)
+        .unwrap(); 
 
 
     //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= DEBUG -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= 
