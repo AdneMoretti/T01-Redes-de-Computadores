@@ -71,13 +71,7 @@ fn read_message(res: Vec<u8>, name: String) -> Result<(), &'static str>   {
 
 }
 
-fn main() {
-
-    let args: Vec<String> = std::env::args().collect();
-
-
-    let (name, server) = (args[1].clone(), args[2].clone());
-
+fn solve(name : String, server : String) ->  Result<(), &'static str> {
 
     let socket: UdpSocket = UdpSocket::bind("0.0.0.0:0")
         .expect("Couldn't bind to address");
@@ -91,8 +85,7 @@ fn main() {
     let (size, _) = socket.recv_from(&mut res)
         .expect("Couldn't recv message");
 
-    read_message(res[0..size].to_vec(), name)
-        .unwrap(); 
+    read_message(res[0..size].to_vec(), name)?;
 
 
     //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= DEBUG -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= 
@@ -106,6 +99,24 @@ fn main() {
     }
     
     //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= DEBUG -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= 
+
+
+    Ok(())
+}
+
+fn main() {
+
+    let args: Vec<String> = std::env::args().collect();
+
+
+    let (name, server) = (args[1].clone(), args[2].clone());
+
+
+    match solve(name, server) {
+        Ok(()) => println!("Deu tudo certo"),
+        Err(m) => println!("{}", m),
+    }
+
 }
 
 
