@@ -6,7 +6,8 @@ pub struct DnsResponse {
     pub qd_count: u16, 
     pub an_count: u16, 
     pub ns_count: u16, 
-    pub ar_count: u16
+    pub ar_count: u16,
+
 }
 
 impl DnsResponse {
@@ -39,6 +40,9 @@ impl DnsResponse {
     pub fn parse_question(&self, res: &[u8]) -> (u16, u16){
         let q_type = ((res[0] as u16) << 8) + (res[1] as u16);
         let q_class = ((res[2] as u16) << 8) + (res[3] as u16);
+        
+        
+
         return (q_type, q_class);
     }
 
@@ -62,5 +66,10 @@ impl DnsResponse {
         }
         return qname; 
     }
+
+    // pub fn parse_data() {
+
+            
+    // }
 
 }

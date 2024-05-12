@@ -2,11 +2,7 @@ use std::net::UdpSocket;
 mod parser;
 use parser::DnsResponse; 
 
-// pub use crate::parser::DnsResponse;
-
-//const secret = rand::thread_rng();
-
-fn send(server : String, name : String, socket: &UdpSocket) {
+fn create_message(name : String) -> Vec<u8>{
     println!("{}", name); 
     let _id1: u8 = rand::random();
     let _id2: u8 = rand::random();
@@ -31,8 +27,7 @@ fn send(server : String, name : String, socket: &UdpSocket) {
     buffer.extend([0x00, 0x02]);
     buffer.extend([0x00, 0x01]);
     
-
-    socket.send_to(&buffer, format!("{}:53", server)).expect("Couldn't send message");
+    buffer
     
 }
 
@@ -67,7 +62,7 @@ fn receive(socket: &UdpSocket, name: String) -> Vec<u8>  {
     }
         
     for _ in 0..dns_response.an_count {
-
+        
     }
 
     for _ in 0..dns_response.ns_count {
@@ -86,11 +81,14 @@ fn receive(socket: &UdpSocket, name: String) -> Vec<u8>  {
 
 fn main() {
   let args: Vec<String> = std::env::args().collect();
-  
-  
-  let socket: UdpSocket = UdpSocket::bind("0.0.0.0:0").expect("Couldn't bind to address");
 
-  send(args[2].clone(), args[1].clone(), &socket);
+  let (name, server) = (args[1].clone(), args[2].clone());
+  
+  let socket: UdpSocket = UdpSocket::bind("0.0.0.0:0")
+    .expect("Couldn't bind to address");
+
+  socket.send_to(&create_message(name) , format!("{}:53", server))
+    .expect("Couldn't send message");
 
   let mut _res: Vec<u8> = receive(&socket, args[1].clone()); 
 
