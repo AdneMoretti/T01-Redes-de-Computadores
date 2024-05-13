@@ -4,6 +4,15 @@
 
 Este documento fornece uma visão geral do projeto DNS Client em Rust. O objetivo do projeto é criar um cliente DNS capaz de enviar consultas para servidores DNS e interpretar as respostas recebidas. O projeto consiste em dois módulos principais: o módulo `main`, responsável pela execução do cliente DNS, e o módulo `parser`, responsável por analisar as respostas DNS recebidas dos servidores.
 
+## Sistema Operacional
+
+    - Foi utilizado sistema operacional Linux.
+
+## Ambiente de Desenvolvimento
+
+    - VSCode
+    - Vim
+
 ## Módulos
 
 ### 1. Main
@@ -20,21 +29,21 @@ Substitua `<endereco_dns>` pelo endereço IP do servidor DNS a ser consultado e 
 
 Para rodar o projeto, é necessário ter o Rust e o cargo instalados na máquina, para instalar as tecnologias, é necessário seguir o guia de instalação do próprio Rust, segue link:
 
-https://doc.rust-lang.org/cargo/getting-started/installation.html
+- [rust e cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 
 Para rodar o programa para checar o programa podemos rodar (etapa opcional):
 
-```
+```bash
 cargo check
 ```
 
 E por fim rodar o programa enviando os argumentos desejados:
 
-```
-cargo run <nome_do_dominio> <endereco_dns>
+```bash
+cargo run $nome_do_dominio $endereco_dns
 ```
 
-## Exemplo de Uso
+## Instruções de Uso
 
 Suponha que você deseja consultar os servidores DNS para obter os registros NS (servidores de nomes) de um determinado domínio, por exemplo, `example.com`. Você pode executar o cliente DNS da seguinte maneira:
 
@@ -51,6 +60,14 @@ Isso enviará uma consulta DNS para o servidor DNS especificado (`8.8.8.8`) para
 ## Conclusão
 
 O projeto DNS Client em Rust oferece uma maneira de enviar consultas DNS e interpretar as respostas recebidas. Pode ser utilizado como meio de aprendizado das consultas DNS, pois não utiliza de nenhuma biblioteca de rust para fazer o parser do recebimento do cabeçalho e dados do DNS.
+
+## Observações
+
+Ao fazer uma requisição DNS, um arquivo é criado na raiz do diretório com os dados brutos da resposta. É possível visualizar esses dados a partir deste comando:
+
+```bash
+cat debug_row_message.bin | hexdump -C
+```
 
 ## Referências Bibliográficas
 
