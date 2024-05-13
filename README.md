@@ -1,5 +1,14 @@
 # Documentação do Projeto DNS Client em Rust
 
+## Alunos
+
+| Nome                           | Matrícula |
+| ------------------------------ | --------- |
+| Cicero Barrozo Fernandes Filho | 190085819 |
+| Gabriel Costa de Oliveira      | 190045817 |
+| Adne Moretti Moreira           | 200013181 |
+| Leonardo Milomes Vitoriano     | 201000379 |
+
 ## Introdução
 
 Este documento fornece uma visão geral do projeto DNS Client em Rust. O objetivo do projeto é criar um cliente DNS capaz de enviar consultas para servidores DNS e interpretar as respostas recebidas. O projeto consiste em dois módulos principais: o módulo `main`, responsável pela execução do cliente DNS, e o módulo `parser`, responsável por analisar as respostas DNS recebidas dos servidores.
